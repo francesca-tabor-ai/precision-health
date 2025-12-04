@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus, ChefHat, Search, ShoppingCart, Store, Package } from 'lucide-react';
+import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus, ChefHat, Search, ShoppingCart, Store, Package, Syringe } from 'lucide-react';
 import { RecipeBrowser } from './RecipeBrowser';
 import { FoodLookup } from './FoodLookup';
 import { RestaurantBrowser } from './RestaurantBrowser';
 import { GroceryShopping } from './GroceryShopping';
+import { MedicationTracker } from './MedicationTracker';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -13,7 +14,7 @@ interface DashboardProps {
   onSignOut: () => void;
 }
 
-type View = 'overview' | 'biomarkers' | 'nutrition' | 'recipes' | 'food-lookup' | 'meal-plans' | 'restaurants' | 'grocery' | 'supplements' | 'appointments' | 'profile';
+type View = 'overview' | 'biomarkers' | 'nutrition' | 'recipes' | 'food-lookup' | 'meal-plans' | 'restaurants' | 'grocery' | 'medications' | 'supplements' | 'appointments' | 'profile';
 
 export function Dashboard({ onSignOut }: DashboardProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -115,6 +116,12 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             onClick={() => setCurrentView('grocery')}
           />
           <NavItem
+            icon={<Syringe />}
+            label="Medications"
+            active={currentView === 'medications'}
+            onClick={() => setCurrentView('medications')}
+          />
+          <NavItem
             icon={<Pill />}
             label="Supplements"
             active={currentView === 'supplements'}
@@ -156,6 +163,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             {currentView === 'meal-plans' && <MealPlansView />}
             {currentView === 'restaurants' && <RestaurantBrowser />}
             {currentView === 'grocery' && <GroceryShopping />}
+            {currentView === 'medications' && <MedicationTracker />}
             {currentView === 'supplements' && <SupplementsView />}
             {currentView === 'appointments' && <AppointmentsView />}
             {currentView === 'profile' && <ProfileView profile={profile} onProfileUpdate={loadProfile} />}
