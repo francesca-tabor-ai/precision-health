@@ -62,15 +62,15 @@ export function Auth({ onAuthSuccess }: AuthProps) {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center space-x-2 mb-4">
             <Heart className="w-10 h-10 text-brand-text" />
-            <span className="font-heading text-3xl text-brand-text">PRECISION HEALTH</span>
+            <span className="font-heading text-3xl text-brand-text">PRECISION NUTRITION</span>
           </div>
           <h2 className="text-3xl font-heading mb-2">
             {isSignUp ? 'CREATE YOUR ACCOUNT' : 'WELCOME BACK'}
           </h2>
           <p className="font-light">
             {isSignUp
-              ? 'Start your precision health journey today'
-              : 'Continue your precision health journey'}
+              ? 'Start your precision nutrition journey today'
+              : 'Continue your precision nutrition journey'}
           </p>
         </div>
 

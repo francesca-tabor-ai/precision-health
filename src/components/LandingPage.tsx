@@ -12,7 +12,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-2">
               <Heart className="w-8 h-8 text-brand-text" />
-              <span className="font-heading text-2xl text-brand-text">PRECISION HEALTH</span>
+              <span className="font-heading text-2xl text-brand-text">PRECISION NUTRITION</span>
             </div>
             <button
               onClick={onGetStarted}
@@ -48,7 +48,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
                 onClick={onGetStarted}
                 className="px-8 py-4 bg-white text-brand-text rounded-lg text-lg font-semibold transition-all hover:bg-brand-cream hover:shadow-2xl"
               >
-                Start Your Precision Health Journey
+                Start Your Precision Nutrition Journey
               </button>
             </div>
           </div>
@@ -156,7 +156,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
             READY TO TRANSFORM YOUR HEALTH?
           </h2>
           <p className="text-xl mb-8 font-light">
-            Join the most comprehensive precision health platform for humans and pets.
+            Join the most comprehensive precision nutrition platform for humans and pets.
           </p>
           <button
             onClick={onGetStarted}
@@ -172,7 +172,7 @@ export function LandingPage({ onGetStarted }: LandingPageProps) {
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="flex items-center space-x-2">
               <Heart className="w-6 h-6 text-brand-text" />
-              <span className="font-heading text-xl text-brand-text">PRECISION HEALTH</span>
+              <span className="font-heading text-xl text-brand-text">PRECISION NUTRITION</span>
             </div>
             <p className="text-sm font-light">
               Medical-grade diagnostics, nutrition science, and predictive AI for comprehensive health management.
