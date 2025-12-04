@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus } from 'lucide-react';
+import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus, ChefHat, Search, ShoppingCart } from 'lucide-react';
+import { RecipeBrowser } from './RecipeBrowser';
+import { FoodLookup } from './FoodLookup';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -9,7 +11,7 @@ interface DashboardProps {
   onSignOut: () => void;
 }
 
-type View = 'overview' | 'biomarkers' | 'nutrition' | 'supplements' | 'appointments' | 'profile';
+type View = 'overview' | 'biomarkers' | 'nutrition' | 'recipes' | 'food-lookup' | 'meal-plans' | 'supplements' | 'appointments' | 'profile';
 
 export function Dashboard({ onSignOut }: DashboardProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -61,7 +63,7 @@ export function Dashboard({ onSignOut }: DashboardProps) {
           </div>
         </div>
 
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           <NavItem
             icon={<Activity />}
             label="Overview"
@@ -79,6 +81,24 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             label="Nutrition"
             active={currentView === 'nutrition'}
             onClick={() => setCurrentView('nutrition')}
+          />
+          <NavItem
+            icon={<ChefHat />}
+            label="Recipes"
+            active={currentView === 'recipes'}
+            onClick={() => setCurrentView('recipes')}
+          />
+          <NavItem
+            icon={<Search />}
+            label="Food Lookup"
+            active={currentView === 'food-lookup'}
+            onClick={() => setCurrentView('food-lookup')}
+          />
+          <NavItem
+            icon={<ShoppingCart />}
+            label="Meal Plans"
+            active={currentView === 'meal-plans'}
+            onClick={() => setCurrentView('meal-plans')}
           />
           <NavItem
             icon={<Pill />}
@@ -117,6 +137,9 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             {currentView === 'overview' && <OverviewView profile={profile} />}
             {currentView === 'biomarkers' && <BiomarkersView />}
             {currentView === 'nutrition' && <NutritionView />}
+            {currentView === 'recipes' && <RecipeBrowser />}
+            {currentView === 'food-lookup' && <FoodLookup />}
+            {currentView === 'meal-plans' && <MealPlansView />}
             {currentView === 'supplements' && <SupplementsView />}
             {currentView === 'appointments' && <AppointmentsView />}
             {currentView === 'profile' && <ProfileView profile={profile} onProfileUpdate={loadProfile} />}
@@ -295,6 +318,89 @@ function SupplementsView() {
           Upload your biomarker data to receive personalized supplement recommendations
         </p>
       </div>
+    </div>
+  );
+}
+
+function MealPlansView() {
+  const [mealPlans, setMealPlans] = useState<Database['public']['Tables']['weekly_meal_plans']['Row'][]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadMealPlans();
+  }, []);
+
+  const loadMealPlans = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from('weekly_meal_plans')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setMealPlans(data || []);
+    } catch (error) {
+      console.error('Error loading meal plans:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-heading">MEAL PLANS</h1>
+        <button className="flex items-center space-x-2 px-6 py-3 bg-brand-text text-white rounded-lg font-medium hover:opacity-90 transition-all">
+          <Plus className="w-5 h-5" />
+          <span>Generate Meal Plan</span>
+        </button>
+      </div>
+
+      {loading ? (
+        <div className="text-center py-12">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-text mx-auto mb-4"></div>
+          <p className="font-light">Loading meal plans...</p>
+        </div>
+      ) : mealPlans.length === 0 ? (
+        <div className="bg-white rounded-xl p-12 text-center shadow-sm">
+          <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+          <h3 className="text-2xl font-heading mb-2">NO MEAL PLANS YET</h3>
+          <p className="font-light text-gray-600 mb-6">
+            Generate your first personalized meal plan based on your biomarkers and health goals
+          </p>
+          <button className="px-6 py-3 bg-brand-text text-white rounded-lg font-medium hover:opacity-90 transition-all">
+            Generate Meal Plan
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {mealPlans.map((plan) => (
+            <div key={plan.id} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-xl font-heading mb-1">{plan.plan_name}</h3>
+                  <p className="text-sm text-gray-500">
+                    {new Date(plan.start_date).toLocaleDateString()} - {new Date(plan.end_date).toLocaleDateString()}
+                  </p>
+                </div>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                  plan.status === 'active' ? 'bg-green-100 text-green-700' :
+                  plan.status === 'completed' ? 'bg-blue-100 text-blue-700' :
+                  'bg-gray-100 text-gray-700'
+                }`}>
+                  {plan.status.toUpperCase()}
+                </span>
+              </div>
+              <button className="text-brand-text font-medium hover:underline">
+                View Details
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
