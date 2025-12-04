@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Database } from '../lib/database.types';
-import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus, ChefHat, Search, ShoppingCart } from 'lucide-react';
+import { Heart, Activity, FileText, Utensils, Calendar, Pill, User, LogOut, Plus, ChefHat, Search, ShoppingCart, Store, Package } from 'lucide-react';
 import { RecipeBrowser } from './RecipeBrowser';
 import { FoodLookup } from './FoodLookup';
+import { RestaurantBrowser } from './RestaurantBrowser';
+import { GroceryShopping } from './GroceryShopping';
 
 type Profile = Database['public']['Tables']['profiles']['Row'];
 
@@ -11,7 +13,7 @@ interface DashboardProps {
   onSignOut: () => void;
 }
 
-type View = 'overview' | 'biomarkers' | 'nutrition' | 'recipes' | 'food-lookup' | 'meal-plans' | 'supplements' | 'appointments' | 'profile';
+type View = 'overview' | 'biomarkers' | 'nutrition' | 'recipes' | 'food-lookup' | 'meal-plans' | 'restaurants' | 'grocery' | 'supplements' | 'appointments' | 'profile';
 
 export function Dashboard({ onSignOut }: DashboardProps) {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -101,6 +103,18 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             onClick={() => setCurrentView('meal-plans')}
           />
           <NavItem
+            icon={<Store />}
+            label="Restaurants"
+            active={currentView === 'restaurants'}
+            onClick={() => setCurrentView('restaurants')}
+          />
+          <NavItem
+            icon={<Package />}
+            label="Grocery"
+            active={currentView === 'grocery'}
+            onClick={() => setCurrentView('grocery')}
+          />
+          <NavItem
             icon={<Pill />}
             label="Supplements"
             active={currentView === 'supplements'}
@@ -140,6 +154,8 @@ export function Dashboard({ onSignOut }: DashboardProps) {
             {currentView === 'recipes' && <RecipeBrowser />}
             {currentView === 'food-lookup' && <FoodLookup />}
             {currentView === 'meal-plans' && <MealPlansView />}
+            {currentView === 'restaurants' && <RestaurantBrowser />}
+            {currentView === 'grocery' && <GroceryShopping />}
             {currentView === 'supplements' && <SupplementsView />}
             {currentView === 'appointments' && <AppointmentsView />}
             {currentView === 'profile' && <ProfileView profile={profile} onProfileUpdate={loadProfile} />}
